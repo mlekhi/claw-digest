@@ -1,0 +1,17 @@
+```mermaid
+flowchart TD
+    CronJob[daily cron]
+    TwitterAPI[twitter api]
+    DigestScript[digest script]
+    ClaudeAPI[claude]
+    WhatsApp[whatsapp]
+    IsolatedSession[isolated session]
+    
+    CronJob -->|triggers| DigestScript
+    DigestScript -->|fetch| TwitterAPI
+    TwitterAPI -->|tweets| DigestScript
+    DigestScript -->|summarize| ClaudeAPI
+    ClaudeAPI -->|summary| DigestScript
+    DigestScript -->|delete raw| IsolatedSession
+    DigestScript -->|send| WhatsApp
+```
