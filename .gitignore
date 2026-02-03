@@ -1,0 +1,27 @@
+# environment variables (keep your secrets safe!)
+.env
+.env.local
+
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# clawdbot
+.openclaw/
+
+# os
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# logs
+*.log
