@@ -46,27 +46,18 @@ openclaw cron add \
   --to "+YOUR_PHONE"
 ```
 
-## how it works
+## architecture
 
-```mermaid
-flowchart TD
-    CronJob[daily cron]
-    TwitterAPI[twitter api]
-    DigestScript[digest script]
-    ClaudeAPI[claude]
-    WhatsApp[whatsapp]
-    IsolatedSession[isolated session]
-    
-    CronJob -->|triggers| DigestScript
-    DigestScript -->|fetch| TwitterAPI
-    TwitterAPI -->|tweets| DigestScript
-    DigestScript -->|summarize| ClaudeAPI
-    ClaudeAPI -->|summary| DigestScript
-    DigestScript -->|delete raw| IsolatedSession
-    DigestScript -->|send| WhatsApp
-```
+see [`architecture.mmd`](architecture.mmd) for system flow diagram
 
-uses your personalized twitter home timeline - same tweets you see when you open twitter
+**how it works:**
+1. daily cron job triggers at your specified time
+2. digest script fetches your twitter home timeline (last 24 hours, sorted by engagement)
+3. raw tweets sent to claude for summarization
+4. isolated session ensures data is immediately deleted
+5. only the final summary is delivered to whatsapp
+
+**yes, this works with your specific twitter feed!** the script uses twitter api's home timeline endpoint - same tweets you see when you open twitter.
 
 ## privacy
 - isolated sessions, no persistent storage
