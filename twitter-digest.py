@@ -38,10 +38,12 @@ def fetch_twitter_timeline():
     
     # calculate 24 hours ago
     start_time = datetime.utcnow() - timedelta(days=1)
-    
+    # free tier = 100 posts/month. daily runs = 30/month, so 100/30 ≈ 3 per run
+    max_results = int(os.getenv("TWITTER_MAX_RESULTS", "3"))
+
     # fetch home timeline
     tweets = client.get_home_timeline(
-        max_results=100,
+        max_results=min(max_results, 100),
         start_time=start_time,
         tweet_fields=['created_at', 'public_metrics', 'author_id'],
         expansions=['author_id'],

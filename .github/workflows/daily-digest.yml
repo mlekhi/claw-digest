@@ -31,4 +31,5 @@ jobs:
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          TWITTER_MAX_RESULTS: ${{ secrets.TWITTER_MAX_RESULTS }}
         run: python twitter-digest.py

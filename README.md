@@ -9,6 +9,7 @@ privacy-conscious twitter feed summarizer → daily email digest
 ### 1. get twitter api credentials
 - go to https://developer.twitter.com/
 - create app, generate: api key, api secret, bearer token, access token, access token secret
+- **free tier = 100 posts/month.** daily runs = 30/month, so default is 3 tweets/run (3 × 30 = 90). optional: set `TWITTER_MAX_RESULTS` higher if you run less often (e.g. weekly = 25/run). cap resets monthly (see your project dashboard).
 
 ### 2. get anthropic api key
 - go to https://console.anthropic.com/
@@ -30,6 +31,7 @@ in your repo: settings → secrets and variables → actions. add:
 - `EMAIL_FROM`
 - `EMAIL_APP_PASSWORD`
 - `EMAIL_TO`
+- (optional) `TWITTER_MAX_RESULTS` – tweets per run, default 3 (for daily runs under 100/month).
 
 ### 5. push
 workflow runs daily at 3pm pacific (23:00 UTC). you can also run it manually: actions → daily twitter digest → run workflow.
