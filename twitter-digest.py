@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
 import os
+import smtplib
 import tweepy
 from datetime import datetime, timedelta
 from pathlib import Path
+
+import anthropic
 
 # load .env file if it exists
 env_file = Path(__file__).parent / '.env'
@@ -86,7 +89,9 @@ def main():
         tweets = fetch_twitter_timeline()
         
         if tweets == "no tweets found in the last 24 hours.":
-            return tweets
+            send_email(tweets)
+            print("no tweets; sent short message to email")
+            return
         
         # format for claude with summarization prompt
         prompt = f"""here are tweets from my twitter feed in the last 24 hours (sorted by engagement/traction). 
@@ -106,16 +111,41 @@ guidelines:
 ---
 
 {tweets}"""
-        
-        # return prompt for claude to process
-        # clawdbot will handle sending this to claude and returning the summary
-        return prompt
-        
+
+        # summarize via anthropic api
+        client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        msg = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1024,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        summary = msg.content[0].text
+
+        # send email
+        send_email(summary)
+        print("digest sent to email")
+        return summary
+
     except Exception as e:
         print(f"error fetching twitter digest: {e}")
-        return f"failed to generate twitter digest: {e}"
+        raise
+
+
+def send_email(body: str) -> None:
+    """send digest via gmail smtp"""
+    from_addr = os.getenv("EMAIL_FROM")
+    password = os.getenv("EMAIL_APP_PASSWORD")
+    to_addr = os.getenv("EMAIL_TO")
+    if not all([from_addr, password, to_addr]):
+        raise ValueError("EMAIL_FROM, EMAIL_APP_PASSWORD, and EMAIL_TO must be set")
+
+    subject = f"Twitter digest – {datetime.now().strftime('%Y-%m-%d')}"
+    msg = f"Subject: {subject}\n\n{body}"
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(from_addr, password)
+        server.sendmail(from_addr, to_addr, msg)
 
 
 if __name__ == "__main__":
-    result = main()
-    print(result)
+    main()

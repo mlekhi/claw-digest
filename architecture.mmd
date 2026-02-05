@@ -1,17 +1,15 @@
 ```mermaid
 flowchart TD
-    CronJob[daily cron]
-    TwitterAPI[twitter api]
+    GitHubActions[github actions]
     DigestScript[digest script]
-    ClaudeAPI[claude]
-    WhatsApp[whatsapp]
-    IsolatedSession[isolated session]
-    
-    CronJob -->|triggers| DigestScript
+    TwitterAPI[twitter api]
+    AnthropicAPI[anthropic api]
+    Email[email]
+
+    GitHubActions -->|schedule 1pm PT| DigestScript
     DigestScript -->|fetch| TwitterAPI
     TwitterAPI -->|tweets| DigestScript
-    DigestScript -->|summarize| ClaudeAPI
-    ClaudeAPI -->|summary| DigestScript
-    DigestScript -->|delete raw| IsolatedSession
-    DigestScript -->|send| WhatsApp
+    DigestScript -->|summarize| AnthropicAPI
+    AnthropicAPI -->|summary| DigestScript
+    DigestScript -->|send| Email
 ```

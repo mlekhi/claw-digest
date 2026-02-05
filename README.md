@@ -10,59 +10,44 @@ privacy-conscious twitter feed summarizer → daily email digest
 - go to https://developer.twitter.com/
 - create app, generate: api key, api secret, bearer token, access token, access token secret
 
-### 2. deploy clawdbot to cloud
-- railway.app or render.com
-- deploy using docker
+### 2. get anthropic api key
+- go to https://console.anthropic.com/
+- create api key
 
-### 3. install python dependencies
-```bash
-pip install -r requirements.txt
-```
+### 3. gmail app password
+- use a gmail account for sending
+- turn on 2fa, then create an app password: https://myaccount.google.com/apppasswords
+- set `EMAIL_FROM` to that gmail address, `EMAIL_APP_PASSWORD` to the app password, `EMAIL_TO` to where you want the digest (can be same or different)
 
-### 4. environment variables
-```
-TWITTER_API_KEY=your_api_key
-TWITTER_API_SECRET=your_api_secret
-TWITTER_BEARER_TOKEN=your_bearer_token
-TWITTER_ACCESS_TOKEN=your_access_token
-TWITTER_ACCESS_TOKEN_SECRET=your_access_token_secret
-ANTHROPIC_API_KEY=your_anthropic_key
-OPENCLAW_GATEWAY_TOKEN=generate_secure_token
-```
+### 4. add github actions secrets
+in your repo: settings → secrets and variables → actions. add:
+- `TWITTER_API_KEY`
+- `TWITTER_API_SECRET`
+- `TWITTER_BEARER_TOKEN`
+- `TWITTER_ACCESS_TOKEN`
+- `TWITTER_ACCESS_TOKEN_SECRET`
+- `ANTHROPIC_API_KEY`
+- `EMAIL_FROM`
+- `EMAIL_APP_PASSWORD`
+- `EMAIL_TO`
 
-### 5. pair whatsapp
-```bash
-openclaw channels login
-```
-
-### 6. create cron job
-```bash
-openclaw cron add \
-  --name "twitter digest" \
-  --cron "0 8 * * *" \
-  --tz "America/Los_Angeles" \
-  --session isolated \
-  --message "run python twitter-digest.py and summarize the output" \
-  --deliver \
-  --channel whatsapp \
-  --to "+YOUR_PHONE"
-```
+### 5. push
+workflow runs daily at 1pm pacific (21:00 UTC). you can also run it manually: actions → daily twitter digest → run workflow.
 
 ## architecture
 
 see [`architecture.mmd`](architecture.mmd) for system flow diagram
 
 **how it works:**
-1. daily cron job triggers at your specified time
-2. digest script fetches your twitter home timeline (last 24 hours, sorted by engagement)
-3. raw tweets sent to claude for summarization
-4. isolated session ensures data is immediately deleted
-5. only the final summary is delivered to whatsapp
+1. github actions runs on schedule (1pm pacific)
+2. script fetches your twitter home timeline (last 24 hours, sorted by engagement)
+3. script calls anthropic api to summarize
+4. script sends summary by email (gmail smtp)
+5. no persistent storage; raw tweets discarded after run
 
-**yes, this works with your specific twitter feed!** the script uses twitter api's home timeline endpoint - same tweets you see when you open twitter.
+**yes, this works with your specific twitter feed.** the script uses twitter api's home timeline endpoint – same tweets you see when you open twitter.
 
 ## privacy
-- isolated sessions, no persistent storage
-- raw tweets deleted immediately after processing
-- only summary is stored/delivered
-- credentials secured as env vars
+- no persistent storage; raw tweets discarded after each run
+- only the summary is sent to your email
+- credentials live in github secrets only (or in local `.env` when testing)
