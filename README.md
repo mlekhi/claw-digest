@@ -32,14 +32,14 @@ in your repo: settings → secrets and variables → actions. add:
 - `EMAIL_TO`
 
 ### 5. push
-workflow runs daily at 1pm pacific (21:00 UTC). you can also run it manually: actions → daily twitter digest → run workflow.
+workflow runs daily at 3pm pacific (23:00 UTC). you can also run it manually: actions → daily twitter digest → run workflow.
 
 ## architecture
 
 see [`architecture.mmd`](architecture.mmd) for system flow diagram
 
 **how it works:**
-1. github actions runs on schedule (1pm pacific)
+1. github actions runs on schedule (3pm pacific)
 2. script fetches your twitter home timeline (last 24 hours, sorted by engagement)
 3. script calls anthropic api to summarize
 4. script sends summary by email (gmail smtp)

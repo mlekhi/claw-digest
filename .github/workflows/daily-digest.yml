@@ -2,8 +2,8 @@ name: daily twitter digest
 
 on:
   schedule:
-    # 1pm Pacific = 21:00 UTC
-    - cron: '0 21 * * *'
+    # 3pm Pacific = 23:00 UTC
+    - cron: '0 23 * * *'
   workflow_dispatch:
 
 jobs:

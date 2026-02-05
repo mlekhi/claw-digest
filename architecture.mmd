@@ -6,7 +6,7 @@ flowchart TD
     AnthropicAPI[anthropic api]
     Email[email]
 
-    GitHubActions -->|schedule 1pm PT| DigestScript
+    GitHubActions -->|schedule 3pm PT| DigestScript
     DigestScript -->|fetch| TwitterAPI
     TwitterAPI -->|tweets| DigestScript
     DigestScript -->|summarize| AnthropicAPI
