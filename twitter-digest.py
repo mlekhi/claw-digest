@@ -3,6 +3,8 @@
 import os
 import smtplib
 import tweepy
+from email.mime.text import MIMEText
+from email.utils import formataddr
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -139,12 +141,15 @@ def send_email(body: str) -> None:
     if not all([from_addr, password, to_addr]):
         raise ValueError("EMAIL_FROM, EMAIL_APP_PASSWORD, and EMAIL_TO must be set")
 
-    subject = f"Twitter digest – {datetime.now().strftime('%Y-%m-%d')}"
-    msg = f"Subject: {subject}\n\n{body}"
+    subject = f"Twitter digest - {datetime.now().strftime('%Y-%m-%d')}"
+    msg = MIMEText(body, "plain", "utf-8")
+    msg["Subject"] = subject
+    msg["From"] = from_addr
+    msg["To"] = to_addr
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(from_addr, password)
-        server.sendmail(from_addr, to_addr, msg)
+        server.sendmail(from_addr, to_addr, msg.as_string())
 
 
 if __name__ == "__main__":
