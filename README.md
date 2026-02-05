@@ -1,6 +1,8 @@
 # clawd digest
 
-privacy-conscious twitter feed summarizer → daily whatsapp summaries
+privacy-conscious twitter feed summarizer → daily email digest
+
+(named clawd because we were gonna use clawdbot and then i didn't but the name stuck)
 
 ## setup
 
